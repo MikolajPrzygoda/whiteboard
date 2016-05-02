@@ -5,21 +5,26 @@
 }
 body {
   background-color: #ABBCFF;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 #content {
   position: absolute;
   width: 800px;
   height: 500px;
-  left: calc(50% - 100px);
+  right: -810px;
+  /*left: calc(50% - 100px);*/
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(50%, -50%);
+  transition-duration: 0.7s;
   background-color: white;
 }
 #canvas {
   width: 100%;
   height: 100%;
   position: absolute;
-  box-shadow: 3px 3px 5px grey;
+  box-shadow: -3px 3px 5px grey;
 }
 #loginCover {
   position: absolute;
@@ -40,13 +45,14 @@ body {
 #onlineUsers {
   position: absolute;
   width: 200px;
-  right: 0;
+  right: -210px;
   list-style-type: none;
   box-shadow: -3px 3px 5px grey;
   background-color: #ABE6FF;
+  transition-duration: 0.7s;
 }
 #onlineUsers li {
   padding: 10px;
   text-align: center;
-  border-bottom: 2px dashed #ABBCFF;
+  border-bottom: 3px dashed #ABBCFF;
 }

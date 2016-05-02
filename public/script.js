@@ -15,6 +15,8 @@ $(document).ready(function(){
       socket.on('loginResponse', function(data){
         if(data){
           $('#loginCover').slideUp(700);
+          $('#onlineUsers').css('right', '0px');
+          $('#content').css('right', 'calc(50% + 100px)');
           init();
         }
         else{
@@ -74,7 +76,6 @@ $(document).ready(function(){
       ctx.moveTo(data.x, data.y);
       ctx.stroke();
     });
-
-    // $()
   }
+
 });
