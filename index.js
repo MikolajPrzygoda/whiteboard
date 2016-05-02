@@ -5,8 +5,32 @@ var io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
+var onlineUsers = [];
+
 io.on('connection', function(socket){
-  console.log(socket.id);
+
+  socket.on('login', function(nick){
+    if(onlineUsers.indexOf(nick) == -1){
+      socket.emit('loginResponse', true);
+      onlineUsers.push(nick);
+      console.log(onlineUsers);
+      io.emit('updateUsers', onlineUsers);
+    }
+    else{
+      socket.emit('loginResponse', false);
+    }
+  });
+
+  socket.on('getUsers', function(){
+    socket.emit('getUsers', onlineUsers);
+  })
+
+  socket.on('logout', function(nick){
+    if(onlineUsers.indexOf(nick) != -1)
+      onlineUsers.splice(onlineUsers.indexOf(nick), 1);
+      console.log(onlineUsers);
+      socket.broadcast.emit('updateUsers', onlineUsers);
+  });
 
   socket.on('drawing', function(data){
     io.emit('drawing', data);
