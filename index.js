@@ -15,23 +15,23 @@ var board = {
 board = {
   lines: [
     {
-      start: {x:, y:},
+      start: {x: , y: },
       points: [{x: , y: },{x: , y: },{x: , y: }, ... ]
     },
     {
-      start: {x:, y:},
+      start: {x: , y: },
       points: [{x: , y: },{x: , y: },{x: , y: }, ... ]
     },
     ...
   ],
   rectangles:[
     {
-      start: {x:, y:},
-      end: {x: , y: }
+      s: {x: , y: },
+      e: {x: , y: }
     },
     {
-      start: {x:, y:},
-      end: {x: , y: }
+      s: {x: , y: },
+      e: {x: , y: }
     },
     ...
   ],
@@ -75,16 +75,21 @@ io.on('connection', function(socket){
     }
   });
 
-  socket.on('endLine', function(data){
-    io.emit('endLine', data);
-
-    var last = board['lines'].length - 1
-    board['lines'][last].points.push( {x: data.x, y: data.y } );
-    logBoard();
-  });
-
   socket.on('updateBoard', function(){
     socket.emit('updateBoard', board);
+  });
+
+  socket.on('resetBoard', function(){
+    io.emit('resetBoard');
+    board = {
+      'lines': [],
+      'rectangles': []
+    }
+  });
+
+  socket.on('drawRect', function(data){
+    io.emit('drawRect', data);
+    board.rectangles.push(data);
   });
 
 });
@@ -92,7 +97,3 @@ io.on('connection', function(socket){
 http.listen(20000, function(){
   console.log('starting on port 20000');
 });
-
-function logBoard(){
-    console.log(board);
-}

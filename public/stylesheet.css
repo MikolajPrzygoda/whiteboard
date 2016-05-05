@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 14px;
 }
 body {
   background-color: #ABBCFF;
@@ -13,12 +14,12 @@ body {
   position: absolute;
   width: 800px;
   height: 500px;
-  right: -810px;
-  /*left: calc(50% - 100px);*/
+  right: -810px; /*animation*/
   top: 50%;
   transform: translate(50%, -50%);
   transition-duration: 0.7s;
   background-color: white;
+  overflow: hidden;
 }
 #canvas {
   width: 100%;
@@ -56,4 +57,28 @@ body {
   padding: 10px;
   text-align: center;
   border-bottom: 3px dashed #ABBCFF;
+}
+
+#toolbar {
+  position: absolute;
+  height: 50px;
+  width: calc(100% - 200px);
+  padding: 5px;
+  text-align: center;
+  line-height: 40px;
+}
+#toolbar > * {
+  vertical-align: top;
+  padding: 5px;
+  height: 40px;
+}
+
+#toolbar > .active {
+  background-color: #fcfcfc;
+}
+
+#rectHelper {
+  border: 2px solid black;
+  position: absolute;
+  border-style: dashed;
 }
