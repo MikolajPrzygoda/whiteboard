@@ -12,14 +12,19 @@
       <canvas id="canvas" width="800" height="500"></canvas>
     </div>
     <div id="toolbar">
-      <button id="line" class="active">
+      <button id="line" class="modeButton active">
         <svg width="26" height="26">
           <line x1="13" y1="0" x2="13" y2="26" style="stroke:#000; stroke-width:1" />
         </svg>
       </button>
-      <button id="rect">
+      <button id="rect" class="modeButton">
         <svg width="26" height="26">
-          <rect width="26" height="26" style="fill:#eee; stroke:black" />
+          <rect width="26" height="26" style="fill:transparent; stroke:black" />
+        </svg>
+      </button>
+      <button id="circle" class="modeButton">
+        <svg width="26" height="26">
+          <circle cx="13" cy="13" r=12 style="fill:transparent; stroke:black" />
         </svg>
       </button>
 
@@ -31,7 +36,7 @@
     <div id="loginCover">
       <div id="loginDiv">
         <form action="" autocomplete="off" >
-          <label><input type="text" id="nick" placeholder="Your nick" maxlength="20" /></label><br />
+          <label><input type="text" id="nick" placeholder="Your nick" maxlength="20" autofocus="true"/></label><br />
           <input type="submit" value="Start" />
         </form>
       </div>

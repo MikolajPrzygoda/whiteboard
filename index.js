@@ -8,7 +8,8 @@ app.use(express.static('public'));
 var onlineUsers = [];
 var board = {
   'lines': [],
-  'rectangles': []
+  'rectangles': [],
+  'circles': []
 }
 /*
 
@@ -26,16 +27,21 @@ board = {
   ],
   rectangles:[
     {
-      s: {x: , y: },
-      e: {x: , y: }
-    },
-    {
-      s: {x: , y: },
-      e: {x: , y: }
+      startx: ,
+      starty: ,
+      width: ,
+      height:
     },
     ...
   ],
-  ... (circles, triangles, ...)
+  circles: [
+    {
+      centerx: ,
+      centery: ,
+      radius:
+    }
+  ]
+  ... (triangles, ...)
 }
 
 */
@@ -83,13 +89,18 @@ io.on('connection', function(socket){
     io.emit('resetBoard');
     board = {
       'lines': [],
-      'rectangles': []
+      'rectangles': [],
+      'circles': []
     }
   });
 
   socket.on('drawRect', function(data){
     io.emit('drawRect', data);
     board.rectangles.push(data);
+  });
+  socket.on('drawCircle', function(data){
+    io.emit('drawCircle', data);
+    board.circles.push(data);
   });
 
 });
