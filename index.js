@@ -6,6 +6,40 @@ var io = require('socket.io')(http);
 app.use(express.static('public'));
 
 var onlineUsers = [];
+var board = {
+  'lines': [],
+  'rectangles': []
+}
+/*
+
+board = {
+  lines: [
+    {
+      start: {x:, y:},
+      points: [{x: , y: },{x: , y: },{x: , y: }, ... ]
+    },
+    {
+      start: {x:, y:},
+      points: [{x: , y: },{x: , y: },{x: , y: }, ... ]
+    },
+    ...
+  ],
+  rectangles:[
+    {
+      start: {x:, y:},
+      end: {x: , y: }
+    },
+    {
+      start: {x:, y:},
+      end: {x: , y: }
+    },
+    ...
+  ],
+  ... (circles, triangles, ...)
+}
+
+*/
+
 
 io.on('connection', function(socket){
 
@@ -13,7 +47,6 @@ io.on('connection', function(socket){
     if(onlineUsers.indexOf(nick) == -1){
       socket.emit('loginResponse', true);
       onlineUsers.push(nick);
-      console.log(onlineUsers);
       io.emit('updateUsers', onlineUsers);
     }
     else{
@@ -21,29 +54,45 @@ io.on('connection', function(socket){
     }
   });
 
-  socket.on('getUsers', function(){
-    socket.emit('getUsers', onlineUsers);
-  })
-
   socket.on('logout', function(nick){
     if(onlineUsers.indexOf(nick) != -1)
       onlineUsers.splice(onlineUsers.indexOf(nick), 1);
-      console.log(onlineUsers);
       socket.broadcast.emit('updateUsers', onlineUsers);
   });
 
-  socket.on('drawing', function(data){
-    io.emit('drawing', data);
+  socket.on('startLine', function(data){
+    io.emit('startLine', data);
+
+    board['lines'].push({ start: {x: data.x, y: data.y }, points: [] })
   });
-  socket.on('startPoint', function(data){
-    io.emit('startPoint', data);
+
+  socket.on('drawingLine', function(data){
+    if(data.mode == 'line'){
+      io.emit('drawingLine', data);
+
+      var last = board['lines'].length - 1;
+      board['lines'][last].points.push( {x: data.x, y: data.y } );
+    }
   });
-  socket.on('endPoint', function(data){
-    io.emit('endPoint', data);
+
+  socket.on('endLine', function(data){
+    io.emit('endLine', data);
+
+    var last = board['lines'].length - 1
+    board['lines'][last].points.push( {x: data.x, y: data.y } );
+    logBoard();
+  });
+
+  socket.on('updateBoard', function(){
+    socket.emit('updateBoard', board);
   });
 
 });
 
 http.listen(20000, function(){
-  console.log('listening on *:20000');
+  console.log('starting on port 20000');
 });
+
+function logBoard(){
+    console.log(board);
+}

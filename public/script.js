@@ -1,7 +1,8 @@
 $(document).ready(function(){
   var socket = io();
-  var interval;
   var nick;
+  var drawing;
+  var mode = "line";
 
   $('#loginCover').width(window.innerWidth);
   $('#loginCover').height(window.innerHeight);
@@ -31,50 +32,74 @@ $(document).ready(function(){
 
   function init(){
 
-    var c = $('#canvas')[0];
-    var ctx = c.getContext("2d");
+    var canvas = $('#canvas')[0];
+    ctx = canvas.getContext("2d");
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
     socket.emit('updateUsers');
+    socket.emit('updateBoard');
+
     socket.on('updateUsers', function(data){
       $('#onlineUsers').html('');
       data.forEach(function(element, index){
       $('#onlineUsers').append( $('<li>').html(element) );
       });
     });
+    socket.on('updateBoard', function(data){
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // clean everything
+
+      data.lines.forEach(function (element, index, array){
+        ctx.beginPath();
+        ctx.moveTo(element.start.x, element.start.y);
+
+        element.points.forEach(function(element, index, array){
+          ctx.lineTo(element.x, element.y);
+          ctx.stroke();
+        });
+
+        ctx.closePath();
+      });
+    });
 
     $(window).on('beforeunload', function(){
       socket.emit('logout', nick);
-    })
+    });
 
     $('#canvas').on('mousedown', function(){
-      interval = true;
-      socket.emit('startPoint', { x: event.offsetX, y: event.offsetY });
+      if(mode == "line"){
+        drawing = true;
+        socket.emit('startLine', { 'nick': nick, 'mode': "line", x: event.offsetX, y: event.offsetY });
+      }
     });
 
     $('#canvas').on('mousemove', function(){
-      if(interval)
-        socket.emit('drawing', {x: event.offsetX, y: event.offsetY} );
+      if(drawing)
+        socket.emit('drawingLine', { 'nick': nick, 'mode': "line", x: event.offsetX, y: event.offsetY} );
     });
 
     $(window).on('mouseup', function(){
-      interval = false;
-      socket.emit('endPoint', { x: event.offsetX, y: event.offsetY });
+      if(mode == "line"){
+        drawing = false;
+
+        socket.emit('endLine', { 'nick': nick, 'mode': "line", x: event.offsetX, y: event.offsetY });
+      }
     });
 
     // socket.emit("drawing", data);
-    socket.on("startPoint", function(data){
+    socket.on("startLine", function(data){
+      ctx.beginPath();
       ctx.moveTo(data.x, data.y);
     });
-    socket.on("drawing", function(data){
+    socket.on("drawingLine", function(data){
       ctx.lineTo(data.x, data.y);
       ctx.stroke();
     });
-    socket.on("endPoint", function(data){
-      ctx.moveTo(data.x, data.y);
+    socket.on("endLine", function(data){
+      ctx.lineTo(data.x, data.y);
       ctx.stroke();
+      ctx.closePath();
     });
   }
 
